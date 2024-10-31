@@ -7,8 +7,6 @@ const buscarUfsPorNome = (nomeUf) => {
     return colecaoUf.filter(uf => uf.nome.toLowerCase().includes(nomeUf.toLowerCase()))
 };
 
-
-
 app.get('/ufs', (req, res) => {
     const nomeUf = req.query.busca;
     const resultado = nomeUf ? buscarUfsPorNome(nomeUf) : colecaoUf;
