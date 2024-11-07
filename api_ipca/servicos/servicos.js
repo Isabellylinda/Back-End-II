@@ -1,7 +1,7 @@
 import historicoInflacao from "../dados/dados";
 
 export const buscarHist = () => {
-    return historicoInflacao;
+    return historicoInflacao;;
 }
 
 export const buscarPorAno = (ano) => {
