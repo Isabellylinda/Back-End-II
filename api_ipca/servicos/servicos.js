@@ -1,14 +1,20 @@
-import historicoInflacao from "../dados/dados";
+// servico/servico.js
 
-export const buscarHist = () => {
-    return historicoInflacao;;
+import historicoInflacao from '../dados/dados.js';
+
+// Função para obter o histórico completo
+export function obterHistoricoCompleto() {
+    return historicoInflacao;
 }
 
-export const buscarPorAno = (ano) => {
-    return historicoInflacao.filter(item => item.ano === ano);
+// Função para filtrar inflação por ano
+export function filtrarPorAno(ano) {
+    return historicoInflacao.filter(dado => dado.ano === ano);
 }
 
-export const buscarUfPorId = (id) => {
-    const idHT = parseInt(id);
-    return historicoInflacao.find(item => item.id === idHT);
+// Função para calcular a média do IPCA em um ano específico
+export function calcularMediaAnual(ano) {
+    const dadosAno = filtrarPorAno(ano);
+    const soma = dadosAno.reduce((acc, dado) => acc + dado.ipca, 0);
+    return dadosAno.length > 0 ? (soma / dadosAno.length).toFixed(2) : 0;
 }
