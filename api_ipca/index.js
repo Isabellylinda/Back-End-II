@@ -1,33 +1,15 @@
-const express = require('express');
-const app = express();
+import express from 'express';
+import historicoInflacao from './dados/dados.js'; 
 const port = 8080;
 
-// Importação dos dados e serviços
-const dados = require('./dados/dados');
-const servico = require('./servico/servico');
 
-// Rota 1: Retorna todos os dados
 app.get('/historicoIPCA', (req, res) => {
-  res.json(dados);
+  res.json(historicoInflacao);
 });
 
-// Rota 2: Retorna dados de um ano específico
-app.get('/historicoIPCA', (req, res) => {
-  const ano = parseInt(req.query.ano);
-
-  // Validação do ano
-  if (ano < 2015 || ano > 2024) {
-    return res.status(404).json({ error: 'Ano inválido. O ano deve ser entre 2015 e 2024.' });
-  }
-
-  const resultado = servico.buscarPorAno(ano, dados);
-  res.json(resultado);
-});
-
-// Rota 3: Retorna dados de um id específico
 app.get('/historicoIPCA/:id', (req, res) => {
-  const id = parseInt(req.params.id);
-  const resultado = servico.buscarPorId(id, dados);
+  const id = parseInt(req.params.id);  
+  const resultado = historicoInflacao.find(dado => dado.id === id); 
 
   if (!resultado) {
     return res.status(404).json({ error: 'ID não encontrado.' });
@@ -36,31 +18,29 @@ app.get('/historicoIPCA/:id', (req, res) => {
   res.json(resultado);
 });
 
-// Rota 4: Realiza o cálculo do reajuste
-app.get('/historicoIPCA/calculo', (req, res) => {
-  const { valor, mesInicial, anoInicial, mesFinal, anoFinal } = req.query;
 
-  // Validação dos parâmetros
-  if (!valor || !mesInicial || !anoInicial || !mesFinal || !anoFinal) {
-    return res.status(400).json({ error: 'Todos os parâmetros são obrigatórios: valor, mesInicial, anoInicial, mesFinal, anoFinal.' });
+app.get('/calcularReajuste/:id', (req, res) => {
+  const id = parseInt(req.params.id);  
+  const dado = historicoInflacao.find(d => d.id === id);
+
+  if (!dado) {
+    return res.status(404).json({ error: 'ID não encontrado.' });
   }
 
-  const valorReajustado = servico.calcularReajuste(
-    parseFloat(valor),
-    parseInt(mesInicial),
-    parseInt(anoInicial),
-    parseInt(mesFinal),
-    parseInt(anoFinal),
-    dados
-  );
+  
+  const ipca = dado.ipca;
+  const reajuste = (valor) => {
+    return valor * (1 + ipca / 100);  
+  };
 
-  if (!valorReajustado) {
-    return res.status(400).json({ error: 'A data final não pode ser anterior à data inicial.' });
-  }
-
-  res.json({ valorReajustado });
+  res.json({
+    id: dado.id,
+    ano: dado.ano,
+    mes: dado.mes,
+    ipca: dado.ipca,
+    reajusteCalculado: reajuste(100)  
+  });
 });
-
 // Inicia o servidor
 app.listen(port, () => {
   console.log(`API rodando na porta ${port}`);
