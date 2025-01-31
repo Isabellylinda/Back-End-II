@@ -20,6 +20,6 @@ app.listen(9000, async () => {
     console.log("Servidor node iniciado em: " +data);
 
     // const conexao = await pool.getConnection();
-    // console.log(conexao.threadId);
+    // console.log(conexaoo.threadId);
     // conexao.release()
 })
