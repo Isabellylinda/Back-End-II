@@ -19,7 +19,7 @@ export async function retornaCampeonatosID(id){
 
 export async function retornaCampeonatosAno(ano){
     const conexao = await pool.getConnection();
-    const campeonatos_tb = await conexao.query('SELECT id, campeao, vice, ano FROM campeonatos WHERE ano= '+ano);
+    const campeonatos_tb = await conexao.query('SELECT id, campeao, vice, ano FROM campeonatos WHERE ano = '+ano);
     const campeonatos = campeonatos_tb[0];
     conexao.release();
     return campeonatos;
@@ -27,7 +27,7 @@ export async function retornaCampeonatosAno(ano){
 
 export async function retornaCampeonatosTime(time){
     const conexao = await pool.getConnection();
-    const campeonatos_tb = await conexao.query('SELECT id, campeao, vice, ano FROM campeonatos WHERE ano= "' + time + '"');
+    const campeonatos_tb = await conexao.query('SELECT id, campeao, vice, ano FROM campeonatos WHERE campeao = "'+time+ '"');
     const campeonatos = campeonatos_tb[0];
     conexao.release();
     return campeonatos;
