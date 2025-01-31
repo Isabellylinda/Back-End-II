@@ -1,29 +1,51 @@
 import express from 'express';
-import { buscarHist, buscarPorAno, buscarUfPorId } from './servicos/servico.js';
+import historicoInflacao from './dados/dados.js';  
 
 const app = express();
+const port = 8080;
+
 
 app.get('/historicoIPCA', (req, res) => {
-    const historico = buscarHist();
-    res.json(historico)
-
+  res.json(historicoInflacao);
 });
 
-app.get('/historicoIPCA/:ano', (req, res) => {
-  const ano = parseInt(req.params.ano, 10);
-  const historico = buscarPorAno(ano);
-  res.json(historico)
-
-});
 
 app.get('/historicoIPCA/:id', (req, res) => {
-  const id= parseInt(req.params.id);
-  const historico = buscarUfPorId(id)
-  res.json(historico)
+  const id = parseInt(req.params.id);  
+  const resultado = historicoInflacao.find(dado => dado.id === id);  
 
+  
+  if (!resultado) {
+    return res.status(404).json({ error: 'ID não encontrado.' });
+  }
+
+  res.json(resultado);
 });
 
 
-app.listen(8080, () => {
-  console.log('Servidor iniciado na porta 8080');
+app.get('/calcularReajuste/:id', (req, res) => {
+  const id = parseInt(req.params.id);  
+  const dado = historicoInflacao.find(d => d.id === id);
+
+  if (!dado) {
+    return res.status(404).json({ error: 'ID não encontrado.' });
+  }
+
+ 
+  const ipca = dado.ipca;
+  const reajuste = (valor) => {
+    return valor * (1 + ipca / 100);  
+  };
+
+  res.json({
+    id: dado.id,
+    ano: dado.ano,
+    mes: dado.mes,
+    ipca: dado.ipca,
+    reajusteCalculado: reajuste(100)  
+  });
+});
+
+app.listen(port, () => {
+  console.log(`API rodando na porta ${port}`);
 });

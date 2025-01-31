@@ -1,7 +1,6 @@
 {
   "name": "api_ipca",
   "version": "1.0.0",
-  "description": "",
   "main": "index.js",
   "type": "module",
   "scripts": {
@@ -12,5 +11,6 @@
   "license": "ISC",
   "dependencies": {
     "express": "^4.21.1"
-  }
+  },
+  "description": ""
 }
