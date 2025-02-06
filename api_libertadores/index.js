@@ -2,15 +2,25 @@ import express from 'express';
 import { retornaCampeonatos} from './servico/retornaCampeonatos_servico.js';
 import { retornaCampeonatosID } from './servico/retornaCampeonatos_servico.js';
 import { retornaCampeonatosAno} from './servico/retornaCampeonatos_servico.js';
-import { retornaCampeonatosTime} from './servico/retornaCampeonatos_servico.js'
-// import pool from './servico/conexao.js';
+import { retornaCampeonatosTime} from './servico/retornaCampeonatos_servico.js';
+import { cadastroCampeonato } from './servico/cadastroCampeonato_servico.js';
 
 const app = express();
+app.use(express.json()); //Suporte para JSON no corpo da resiquisicao
  
 //  app.get('/campeonatos', async (req, res) => {
 //      const campeonatos = await retornaCampeonatos();
 //    res.json(campeonatos)
 //  })
+
+app.post('/campeonatos', async (req, res) => {
+  const campeao = req.body.campeao;
+  const vice = req.body.vice;
+  const ano = req.body.ano;
+  await cadastroCampeonato (campeao, vice, ano);
+  res.status(204).send({"Mensagem": "Cadastro efetivado com sucesso!"});
+
+})
 
  app.get('/campeonatos/:id', async (req, res) => {
     const id = parseInt(req.params.id);
