@@ -1,17 +1,39 @@
+import cors from 'cors';
 import express from 'express';
 import { retornaCampeonatos} from './servico/retornaCampeonatos_servico.js';
 import { retornaCampeonatosID } from './servico/retornaCampeonatos_servico.js';
 import { retornaCampeonatosAno} from './servico/retornaCampeonatos_servico.js';
 import { retornaCampeonatosTime} from './servico/retornaCampeonatos_servico.js';
 import { cadastroCampeonato } from './servico/cadastroCampeonato_servico.js';
+import { atualizaCampeonato } from './servico/atualizaCampeonato_servico.js';
 
 const app = express();
+app.use(cors());
 app.use(express.json()); //Suporte para JSON no corpo da resiquisicao
  
 //  app.get('/campeonatos', async (req, res) => {
 //      const campeonatos = await retornaCampeonatos();
 //    res.json(campeonatos)
 //  })
+
+app.put('/campeonatos/:id', async (req, res) =>{
+  const{id} = req.params;
+  const{campeao, vice, ano} = req.body;
+
+  if (campeao == undefined || vice == undefined || ano == undefined) {
+    res.status(400).send('Nem todos os campos foram informados')    
+  } else {
+    const resultado = await atualizaCampeonato(id, campeao, vice, ano)
+    if (resultado.affectedRows > 0) {
+      res.status(202).send('Registro atualizado com sucesso');
+    } else {
+      res.status(400).send('Registro não encontrado');
+      
+    }
+    
+  }
+
+})
 
 app.post('/campeonatos', async (req, res) => {
   const campeao = req.body.campeao;
@@ -87,3 +109,6 @@ app.listen(9000, async () => {
     // conexao.release();
     //testar no mysql, caso erro
 })
+
+//instalar uma biblioteca chamada cors paraque o express aceite rotas diferentes
+//vai  no console e coloca npm install cors e la em cima importar 'import cors from 'cors';
