@@ -6,6 +6,7 @@ import { retornaCampeonatosAno} from './servico/retornaCampeonatos_servico.js';
 import { retornaCampeonatosTime} from './servico/retornaCampeonatos_servico.js';
 import { cadastroCampeonato } from './servico/cadastroCampeonato_servico.js';
 import { atualizaCampeonato, atualizaCampeonatoParcial } from './servico/atualizaCampeonato_servico.js';
+import { deletaCampeonato } from './servico/deletaCampeonatos_servco.js';
 
 const app = express();
 app.use(cors());
@@ -15,6 +16,18 @@ app.use(express.json()); //Suporte para JSON no corpo da resiquisicao
 //      const campeonatos = await retornaCampeonatos();
 //    res.json(campeonatos)
 //  })
+
+app.delete('/campeonatos/:id', async (req, res) =>{
+  const {id} = req.params;
+  const resultado = await deletaCampeonato(id);
+
+  if (resultado.affectedRows > 0){
+    res.status(202).send('Registro deletado com sucesso');
+  } else {
+    res.status(404).send('Registro não encontrado');
+  }
+})
+
 
 app.patch('/campeonatos/:id', async(req, res) => {
     const {id} = req.params;
