@@ -1,17 +1,31 @@
-export function validarUsuario(nome, email, telefone) {
-    if (!nome || nome.length < 2) {
-        return 'O nome deve ter pelo menos 2 caracteres.';
+export function validaUsuario(nome, email, telefone) {
+    console.log('Validando dados:', { nome, email, telefone });
+
+    if (!nome || !email || !telefone) {
+        console.log('Dados incompletos.');
+        return false;
     }
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-        return 'O e-mail informado não é válido.';
+    if (!validarEmail(email)) {
+        console.log('Email inválido.');
+        return false;
     }
 
-    const telefoneRegex = /^\(\d{2}\) \d{5}-\d{4}$/;
-    if (!telefoneRegex.test(telefone)) {
-        return 'O telefone deve estar no formato (XX) XXXXX-XXXX.';
+    if (!validarTelefone(telefone)) {
+        console.log('Telefone inválido.');
+        return false;
     }
 
-    return null; // Dados válidos
+    console.log('Dados válidos.');
+    return true;
+}
+
+function validarEmail(email) {
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return regex.test(email);
+}
+
+function validarTelefone(telefone) {
+    const regex = /^\(\d{2}\) \d{5}-\d{4}$/;
+    return regex.test(telefone);
 }

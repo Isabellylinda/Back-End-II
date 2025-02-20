@@ -1,32 +1,36 @@
+
 import express from 'express';
 import cors from 'cors';
-import { cadastrarUsuario } from './servicos/cadastro_servico.js';
-import { validarUsuario } from './validacao/valida.js';
+import { validaUsuario } from './validacao/valida.js';
+import { cadastraLead } from './servicos/cadastro_servico.js';
 
 const app = express();
+const port = 9000;
+
 app.use(express.json());
 app.use(cors());
 
 app.post('/usuarios', async (req, res) => {
     const { nome, email, telefone } = req.body;
 
-    // Valida os dados antes de cadastrar
-    const erro = validarUsuario(nome, email, telefone);
-    if (erro) {
-        return res.status(400).json({ erro });
+    console.log('Requisição recebida:', { nome, email, telefone });
+
+   
+    if (!validaUsuario(nome, email, telefone)) {
+        console.log('Dados inválidos.');
+        return res.status(400).json({ mensagem: 'Dados inválidos' });
     }
 
     try {
-        const resultado = await cadastrarUsuario(nome, email, telefone);
-        res.status(201).json({ mensagem: 'Usuário cadastrado com sucesso!', id: resultado.insertId });
-    } catch (erro) {
-        res.status(500).json({ erro: 'Erro ao cadastrar usuário.' });
+        await cadastraLead(nome, email, telefone);
+        console.log('Cadastro efetivado com sucesso.');
+        res.status(201).json({ mensagem: 'Cadastro efetivado com sucesso!' });
+    } catch (error) {
+        console.error('Erro ao cadastrar usuário:', error);
+        res.status(500).json({ mensagem: 'Erro ao cadastrar usuário' });
     }
 });
 
-// Porta do servidor
-const PORT = 9000;
-app.listen(PORT, () => {
-    console.log(`Servidor rodando na porta ${PORT}`);
+app.listen(port, () => {
+    console.log(`Servidor rodando na porta ${port}`);
 });
-
